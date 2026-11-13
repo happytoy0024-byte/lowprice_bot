@@ -438,6 +438,8 @@ def fetch_lowest_offer(pcode: str) -> Dict[str, object]:
 def load_env(path: Path = ENV_PATH) -> Dict[str, str]:
     """Load key=value pairs from .env without relying on external packages."""
     if not path.exists():
+        if any(os.environ.get(k) for k in ("KAKAO_REST_API_KEY", "kakao_REST_API_key", "KAKAO_REFRESH_TOKEN")):
+            return dict(os.environ)
         raise BotError(f"카카오 인증을 위한 .env 파일을 찾을 수 없습니다: {path}")
 
     env: Dict[str, str] = {}
