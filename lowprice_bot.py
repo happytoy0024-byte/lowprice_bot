@@ -622,7 +622,32 @@ def send_kakao_memo(item: Dict[str, object], env_path: Path = ENV_PATH) -> None:
         raise BotError(f"카카오톡 '나에게 보내기' 발송 실패: {res}")
 
 
-def run() -> int:
+def send_test_notification() -> None:
+    """Send a mock/test KakaoTalk message to verify notification delivery."""
+    test_item = {
+        "title": "[테스트 알림] 베베숲 시그니처 물티슈 70매 캡형 (20팩)",
+        "total_price": 18900,
+        "shipping_label": "무료배송",
+        "mall": "G마켓",
+        "review_count": "1,420",
+        "link": "https://search.danawa.com/dsearch.php?query=" + urllib.parse.quote(QUERY),
+    }
+    print("[테스트 모드] 카카오톡 '나에게 보내기' 테스트 메시지를 발송합니다...")
+    print(f"  - 상품명 : {test_item['title']}")
+    print(f"  - 가격   : {int(test_item['total_price']):,}원 ({test_item['shipping_label']})")
+    print(f"  - 쇼핑몰 : {test_item['mall']}")
+    print(f"  - 리뷰수 : {test_item['review_count']}")
+    print(f"  - 링크   : {test_item['link']}")
+    send_kakao_memo(test_item)
+    print("[카카오톡 알림] 테스트 메시지 발송 완료! 카카오톡을 확인해 주세요.")
+
+
+def run(argv: Optional[List[str]] = None) -> int:
+    args = sys.argv[1:] if argv is None else argv
+    if any(arg in ("--test", "-t", "test") for arg in args):
+        send_test_notification()
+        return 0
+
     candidates = search_candidates(QUERY)
     top_candidates = candidates[:CANDIDATE_SCAN_LIMIT]
 
